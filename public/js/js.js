@@ -1,10 +1,12 @@
 //Dados do firebase (database, storage e auth) e variável de referência (chave do usuario logado)
 let chave_usuario = '';
 let chave_receita = '';
-let database = firebase.database().ref('receita');
-let storage = firebase.storage().ref();
-let auth = firebase.auth();
-auth.languageCode = 'pt-br';
+let acesso = firebase.database().ref('receita/acesso');
+let dado = firebase.database().ref('receita/dado');
+let arquivo = firebase.storage().ref();
+let autenticacao = firebase.auth();
+let provedor = firebase.auth;
+autenticacao.languageCode = 'pt-br';
 
 //Variável que vai conter um novo provedor
 let provider;
@@ -37,43 +39,43 @@ let formBuscar = document.getElementById('form_busca');
 
 //Funções que autentica por provider (Google, Facebook, Twitter ou Github)
 document.getElementById('btn_google').addEventListener('click', function() {
-	provider = new firebase.auth.GoogleAuthProvider();
+	provider = new provedor.GoogleAuthProvider();
 	conectar(provider);
 });
 
 document.getElementById('btn_facebook').addEventListener('click', function() {
-	provider = new firebase.auth.FacebookAuthProvider();
+	provider = new provedor.FacebookAuthProvider();
 	conectar(provider);
 });
 
 document.getElementById('btn_github').addEventListener('click', function() {
-	provider = new firebase.auth.GithubAuthProvider();
+	provider = new provedor.GithubAuthProvider();
 	conectar(provider);
 });
 
 document.getElementById('btn_twitter').addEventListener('click', function() {
-	provider = new firebase.auth.TwitterAuthProvider();
+	provider = new provedor.TwitterAuthProvider();
 	conectar(provider);
 });
 
 //Função que autentica por provider (Google, Facebook, Twitter ou Github)
 function conectar(provider) {
-	auth.signInWithPopup(provider).then(function(result) {
+	autenticacao.signInWithPopup(provider).then(function(result) {
     	chave_usuario = result.user.uid;
     	
     	mudar(true);
         
         M.toast({html: `<p>Bem vindo ${result.user.displayName}</p>`});
     }).catch(function (error) {
-        console.log(error);
+        M.toast({html: '<p>Erro ao tentar conectar ao sistema</p>'});
 
         error.code == 'auth/account-exists-with-different-credential' ? M.toast({html: 'Você já possui uma conta, porém com credencias diferentes!'}) : M.toast({html: 'Falha na autenticação'});
-    })
+    });
 }
 
 //Função que desconecta o usuário autenticado
 document.getElementById('desconectar').addEventListener('click', function() {
-	auth.signOut().then(function() {
+	autenticacao.signOut().then(function() {
   		chave_usuario = '';
 
 		limparCampos();
@@ -136,17 +138,17 @@ document.getElementById('adicionar').addEventListener('click', function() {
 			nomeImagem = valorImagem.name;
 		}
 
-		Promise.resolve(database.child('acesso').push().key)
+		Promise.resolve(acesso.push().key)
 		.then(function(chave) {
 			chave_receita = chave;
 			
-			database.child(`acesso/${chave_receita}`).set({
+			acesso.child(chave_receita).set({
 				tipo: tipo, 
 				usuario: chave_usuario 
 			});
 		})
 		.then(function() {
-			database.child(`dado/${chave_receita}`).set({ 
+			dado.child(chave_receita).set({ 
 				nome: valorNome, 
 				ingrediente: valorIngrediente, 
 				preparo: valorPreparo, 
@@ -155,7 +157,7 @@ document.getElementById('adicionar').addEventListener('click', function() {
 		})
 		.then(function() {
 			if(valorImagem !== undefined) {
-				storage.child(`${chave_receita}/${valorImagem.name}`).put(valorImagem);
+				arquivo.child(`${chave_receita}/${valorImagem.name}`).put(valorImagem);
 			}
 		})
 		.then(function() {
@@ -163,7 +165,9 @@ document.getElementById('adicionar').addEventListener('click', function() {
 
 			limparCampos();
 		})
-		.catch(() => console.log('algum erro ocorreu'));
+		.catch(function() { 
+			M.toast({html: '<p>Erro ao adicionar a receita</p>'});
+		});
 	} else {
 		M.toast({html: '<p>Preencha os campos nome, ingrediente e modo de preparo!</p>'});
 	}
@@ -192,12 +196,12 @@ document.getElementById('editar').addEventListener('click', function() {
 				nomeImagem = valorImagem.name;
 			}
 
-			database.child(`acesso/${chave_receita}`).set({
+			acesso.child(chave_receita).set({
 				tipo: tipo, 
 				usuario: chave_usuario 
 			})
 			.then(function() {
-				database.child(`dado/${chave_receita}`).set({ 
+				dado.child(chave_receita).set({ 
 					nome: valorNome, 
 					ingrediente: valorIngrediente, 
 					preparo: valorPreparo, 
@@ -207,9 +211,8 @@ document.getElementById('editar').addEventListener('click', function() {
 			.then(function() {
 				if(valorImagem !== undefined) {
 					excluirImagem(chave_receita);
-	
-					console.log(chave_receita)
-					storage.child(`${chave_receita}/${valorImagem.name}`).put(valorImagem);
+
+					arquivo.child(`${chave_receita}/${valorImagem.name}`).put(valorImagem);
 				}
 			})
 			.then(function() {
@@ -229,10 +232,10 @@ document.getElementById('editar').addEventListener('click', function() {
 //Função que exclui a receita selecionada
 document.getElementById('excluir').addEventListener('click', function() {
 	if(chave_receita != '') {
-		database.child(`dado/${chave_receita}`).remove().then(function() {
-			database.child(`acesso/${chave_receita}`).remove();
+		dado.child(chave_receita).remove().then(function() {
+			acesso.child(chave_receita).remove();
 
-			storage.child(chave_receita).child(imagem_texto.value).delete();
+			arquivo.child(chave_receita).child(imagem_texto.value).delete();
 		})
 		.then(function() {
         	M.toast({html: '<p>Receita removida</p>'});
@@ -293,19 +296,43 @@ busca.addEventListener('keyup', function() {
 					mostrar(chave, obj.nome, url);
 		  		}
 		  	})
-		})
+		});
 	} else {
 		M.toast({html: '<p>Preencha todos os campos!</p>'});
 	}
 });*/
 
-//Função que lê o acesso as minhas receitas, favoritas e públicas
+//Função que lê o acesso, os dados e mostra as receitas pessoais, favoritas e públicas
 function acessar_minha_receita() {
 	M.toast({html: '<p>Atualizando lista de minhas receitas</p>'});
 
-	database.child('acesso').orderByChild('usuario').equalTo(chave_usuario).once('value').then(function(snapshot) {
+	acesso.orderByChild('usuario').equalTo(chave_usuario).once('value').then(function(snapshot) {
 		snapshot.forEach(function(childSnapshot) {
-	      	ler_minha_receita(childSnapshot.key, childSnapshot.val().tipo);
+			(function(chave, tipo) {
+				dado.child(chave).once('value').then(function(snapshot) {
+					obj = snapshot.val();
+			
+					url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+			
+					(function(chave, nome, url, tipo) {
+						minha_receita.innerHTML += `
+							<a class="div_receita" href="#container">
+								<div class="col s12 m4 l3" onclick="selecionar('${chave}', ${tipo})">
+									<div class="card">
+										<div class="card-image">
+											<img src="${url}">
+											<span class="card-title">${nome}</span>
+										</div>
+									</div>
+								</div>
+							</a>
+						`;
+					})(chave, obj.nome, url, tipo);
+				})
+				.catch(function() {
+					M.toast({html: '<p>Algum erro ocorreu, uma receita pessoal não pode ser mostrada!</p>'});
+				});
+			})(childSnapshot.key, childSnapshot.val().tipo);
 	  	});
 	})
 	.catch(function() {
@@ -315,9 +342,33 @@ function acessar_minha_receita() {
 function acessar_receita_favorita() {
 	M.toast({html: '<p>Atualizando lista de receitas favoritas</p>'});
 
-	database.child('acesso').orderByChild('usuario').equalTo(chave_usuario).once('value').then(function(snapshot) {
+	acesso.orderByChild('usuario').equalTo(chave_usuario).once('value').then(function(snapshot) {
 		snapshot.forEach(function(childSnapshot) {
-	      	ler_receita_favorita(childSnapshot.key, childSnapshot.val().tipo);
+			(function(chave, tipo) {
+				dado.child(chave).once('value').then(function(snapshot) {
+					obj = snapshot.val();
+			
+					url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+			
+					(function(chave, nome, url, tipo) {
+						receita_favorita.innerHTML += `
+							<a class="div_receita" href="#container">
+								<div class="col s12 m4 l3" onclick="selecionar('${chave}', ${tipo})">
+									<div class="card">
+										<div class="card-image">
+											<img src="${url}">
+											<span class="card-title">${nome}</span>
+										</div>
+									</div>
+								</div>
+							</a>
+						`;
+					})(chave, obj.nome, url, tipo);
+				})
+				.catch(function() {
+					M.toast({html: '<p>Algum erro ocorreu, uma receita favorita não pode ser mostrada!</p>'});
+				});
+			})(childSnapshot.key, childSnapshot.val().tipo);
 	  	});
 	})
 	.catch(function() {
@@ -327,12 +378,36 @@ function acessar_receita_favorita() {
 function acessar_receita_publica() {
 	M.toast({html: '<p>Atualizando lista de receitas favoritas</p>'});
 
-	database.child('acesso').orderByChild('tipo').equalTo(true).once('value').then(function(snapshot) {
+	acesso.orderByChild('tipo').equalTo(true).once('value').then(function(snapshot) {
 		snapshot.forEach(function(childSnapshot) {
 	      	objeto = childSnapshot.val();
 
 	      	if(objeto.usuario != chave_usuario) { 
-				ler_receita_publica(childSnapshot.key, objeto.tipo);
+				(function(chave, tipo) {
+					dado.child(chave).once('value').then(function(snapshot) {
+						  obj = snapshot.val();
+				
+						  url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+				
+						(function(chave, nome, url, tipo) {
+							receita_publica.innerHTML += `
+								<a class="div_receita" href="#container">
+									<div class="col s12 m4 l3" onclick="selecionar('${chave}', ${tipo})">
+										<div class="card">
+											<div class="card-image">
+												<img src="${url}">
+												<span class="card-title">${nome}</span>
+											</div>
+										</div>
+									</div>
+								</a>
+							`;
+						})(chave, obj.nome, url, tipo);
+					})
+					.catch(function() {
+						M.toast({html: '<p>Algum erro ocorreu, uma receita pública não pode ser mostrada!</p>'});
+					});
+				})(childSnapshot.key, objeto.tipo);
 			}
 	  	});
 	})
@@ -341,90 +416,11 @@ function acessar_receita_publica() {
 	});
 }
 
-//Função que lê os dados das minhas receitas, favoritas e públicas
-function ler_minha_receita(chave, tipo) {
-	database.child(`dado/${chave}`).once('value').then(function(snapshot) {
-      	obj = snapshot.val();
- 
-      	url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-costamilam.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=8a953e96-fa2e-425d-bcd5-d811e8c6d1a3` : './file/default.png';
-
-		mostrar_minha_receita(chave, obj.nome, url, tipo);
-  	})
-	.catch(function() {
-		M.toast({html: '<p>Algum erro ocorreu, uma receita pessoal não pode ser mostrada!</p>'});
-	});
-}
-function ler_receita_favorita(chave, tipo) {
-	database.child(`dado/${chave}`).once('value').then(function(snapshot) {
-      	obj = snapshot.val();
- 
-      	url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-costamilam.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=8a953e96-fa2e-425d-bcd5-d811e8c6d1a3` : './file/default.png';
-
-		mostrar_receita_favorita(chave, obj.nome, url, tipo);
-  	})
-	.catch(function() {
-		M.toast({html: '<p>Algum erro ocorreu, uma receita favorita não pode ser mostrada!</p>'});
-	});
-}
-function ler_receita_publica(chave, tipo) {
-	database.child(`dado/${chave}`).once('value').then(function(snapshot) {
-      	obj = snapshot.val();
-
-      	url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-costamilam.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=8a953e96-fa2e-425d-bcd5-d811e8c6d1a3` : './file/default.png';
-
-		mostrar_receita_publica(chave, obj.nome, url, tipo);
-  	})
-	.catch(function() {
-		M.toast({html: '<p>Algum erro ocorreu, uma receita pública não pode ser mostrada!</p>'});
-	});
-}
-
-//Função que adiciona uma receita no bloco HTML que exibe a lista de receita a partir dos parâmetros passados
-function mostrar_minha_receita(chave, nome, url, tipo) {
-	minha_receita.innerHTML +=
-		`<a class="div_receita" href="#container">
-			<div class="col s12 m4 l3" onclick="selecionar('${chave}', ${tipo})">
-	            <div class="card">
-	                <div class="card-image">
-	                    <img src="${url}">
-	                    <span class="card-title">${nome}</span>
-	                </div>
-	            </div>
-	    	</div>
-		</a>`;
-}
-function mostrar_receita_favorita(chave, nome, url, tipo) {
-	receita_favorita.innerHTML +=
-		`<a class="div_receita" href="#container">
-			<div class="col s12 m4 l3" onclick="selecionar('${chave}', ${tipo})">
-	            <div class="card">
-	                <div class="card-image">
-	                    <img src="${url}">
-	                    <span class="card-title">${nome}</span>
-	                </div>
-	            </div>
-	    	</div>
-		</a>`;
-}
-function mostrar_receita_publica(chave, nome, url, tipo) {
-	receita_publica.innerHTML +=
-		`<a class="div_receita" href="#container">
-			<div class="col s12 m4 l3" onclick="selecionar('${chave}', ${tipo})">
-	            <div class="card">
-	                <div class="card-image">
-	                    <img src="${url}">
-	                    <span class="card-title">${nome}</span>
-	                </div>
-	            </div>
-	    	</div>
-		</a>`;
-}
-
 //Função que seleciona uma receita a partir da chave passada por parâmetro
 function selecionar(chave, tipo) {
 	chave_receita = chave;
 
-	database.child(`dado/${chave}`).once('value').then(function(snapshot) {
+	dado.child(chave).once('value').then(function(snapshot) {
 		tipo ? publico.checked = true : privado.checked = true;
 
 		nome.value = snapshot.val().nome;
@@ -452,12 +448,12 @@ function selecionar(chave, tipo) {
 
 //Função que exclui a imagem anterior da receita
 function excluirImagem(chave) {
-	database.child(`dado/${chave}/imagem`).once('value').then(function(snapshot) { 
+	dado.child(`${chave}/imagem`).once('value').then(function(snapshot) { 
 		nomeImagemAntiga = snapshot.val();
 	})
 	.then(function() {
 		if(nomeImagemAntiga && nomeImagemAntiga != nomeImagem) {
-			storage.child(`${chave}/${nomeImagem}`).delete();
+			arquivo.child(`${chave}/${nomeImagem}`).delete();
 		}
 	})
 	.catch(function() {
@@ -491,6 +487,8 @@ function limparCampos() {
 	preparo.classList.remove('valid', 'invalid');
 	ingrediente.classList.remove('valid', 'invalid');
 	imagem_texto.classList.remove('valid', 'invalid');
+	
+	M.updateTextFields();
 }
 
 //Função que alterna entre os formulários de autenticação de usuários e manipulação de receitas
@@ -510,6 +508,7 @@ function mudar(bool) {
 	if(bool) {
 		acessar_receita_favorita();
 		acessar_minha_receita();
+		acessar_receita_publica();
 	}
 }
 
