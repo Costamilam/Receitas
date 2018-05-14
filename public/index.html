@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <title>Receitas v Beta 2.3</title>
+        <meta charset="utf-8">
+
+        <!--Import Google Icon Font-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css"  media="screen,projection">
+
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Social Icons Fonts  -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css">
+
+        <style>
+            form {
+                margin: 20px auto;
+            }
+            #form_busca {
+                margin-top: 100px;
+            }
+            #busca {
+                padding-left: 30px;
+            }
+            .large-icon {
+                font-size: 1em !important;
+            }
+            .card .card-image .card-title {
+                width: 100%;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 12px;
+            }
+            #form_conectar i {
+                width: 10%;
+                height: 50px;
+                margin: 7.333%;
+                padding-top: 10px;
+            }
+            .tabs .tab a:hover, .tabs .tab a.active {
+                color: #ffc107;
+            }
+            .tabs .tab a {
+                color: rgba(255, 193, 7, 0.7);
+            }
+            .tabs .indicator {
+                background-color: #ffe082;
+            }
+            .tabs .tab a:focus, .tabs .tab a:focus.active {
+                background-color: transparent;
+            }
+            #form_receita, #form_busca, #acoes, #receitas {
+                display: none;
+            }
+            [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before, [type="radio"].with-gap:checked+span:after {
+                border-color: #ffc107;
+            }
+            [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after {
+                background-color: #ffc107;
+            }
+            input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
+                border-bottom-color: #ffc107;
+                box-shadow: 0 1px 0 0 #ffc107;
+            }
+            input:not([type]):focus:not([readonly])+label, input[type=text]:not(.browser-default):focus:not([readonly])+label, input[type=password]:not(.browser-default):focus:not([readonly])+label, input[type=email]:not(.browser-default):focus:not([readonly])+label, input[type=url]:not(.browser-default):focus:not([readonly])+label, input[type=time]:not(.browser-default):focus:not([readonly])+label, input[type=date]:not(.browser-default):focus:not([readonly])+label, input[type=datetime]:not(.browser-default):focus:not([readonly])+label, input[type=datetime-local]:not(.browser-default):focus:not([readonly])+label, input[type=tel]:not(.browser-default):focus:not([readonly])+label, input[type=number]:not(.browser-default):focus:not([readonly])+label, input[type=search]:not(.browser-default):focus:not([readonly])+label, textarea.materialize-textarea:focus:not([readonly])+label {
+                color: #ffc107;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- MENU -->
+        <nav class="navbar-fixed">
+            <div class="nav-wrapper amber">
+                <a id="logo" href="#!" class="brand-logo center"><i class="material-icons large-icon"> room_service</i>Minhas Receitas</a>
+                <ul id="acoes" class="right">
+                    <li><a class='link' href="#form_busca"><i class="material-icons">search</i></a></li>
+                    <li><a class='link' href="#receitas" id="adicionar"><i class="material-icons">add</i></a></li>
+                    <li><a class='link' href="#receitas" id="editar"><i class="material-icons">edit</i></a></li>
+                    <li><a class='link' href="#receitas" id="excluir"><i class="material-icons">delete</i></a></li>
+                    <li><a href="#!" id="desconectar"><i class="material-icons">exit_to_app</i></a></li>
+                    <li><a href="#!" id="atualizar"><i class="material-icons">refresh</i></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="container" class="container">
+            <div class="row">
+                <!-- AUTENTICAÇÂO -->
+                <div id="form_conectar" class="col s12">
+                    <h2>Conectar ao Sistema</h2>
+
+                    <div class="col s12">
+                        <i id="btn_github" class="btn fa fa-github fa-2x amber"></i>
+                        <i id="btn_facebook" class="btn fa fa-facebook fa-2x amber"></i>
+                        <i id="btn_twitter" class="btn fa fa-twitter fa-2x amber"></i>
+                        <i id="btn_google" class="btn fa fa-google fa-2x amber"></i>
+                    </div>
+                </div>
+
+                <!-- RECEITAS -->
+                <div id="form_receita" class="col s12" action="#!" method="">
+                    <h2>Receita</h2>
+                    <div class="col s12 center-align">
+                        <div class="col s6">
+                            <label>
+                                <input class="with-gap" name="tipo" type="radio" id="publico" checked="">
+                                <span>Público</span>
+                            </label>
+                        </div>
+                        <div class="col s6">
+                            <label>
+                                <input class="with-gap" name="tipo" type="radio" id="privado">
+                                <span>Privado</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="input-field col s12">
+                        <input id="nome" type="text" class="validate" pattern="[A-z\-]{2}[A-z0-9\- ]{0,23}" required="">
+                        <label for="nome">Nome da receita</label>
+                    </div>
+
+                    <div class="input-field col s12">
+                        <textarea id="ingrediente" class="materialize-textarea validate" pattern="[A-z0-9/.,;]{2}[a-Z0-9\/().,;]{0,148}" required=""></textarea>
+                        <label for="ingrediente">Ingredientes</label>
+                    </div>
+                    
+                    <div class="input-field col s12">
+                        <textarea id="preparo" class="materialize-textarea validate" pattern="[a-Z0-9/.,;]{2}[a-Z0-9\/().,;]{0,148}" required=""></textarea>
+                        <label for="preparo">Modo de preparo</label>
+                    </div>
+                    
+                    <div class="file-field input-field col s12">
+                        <div class="btn amber">
+                            <span>Imagem</span>
+                            <input id="imagem" type="file" accept="image/png, image/jpeg">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input id="imagem_texto" class="file-path validate" type="text">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BUSCA -->
+                <div id="form_busca" action="#!" class="col s12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="busca" type="search" placeholder="Procure por nome, ingrediente ou modo de preparo" required="">
+                            <label class="label-icon active" for="busca"><i class="material-icons">search</i></label>
+                            <i id="close" class="material-icons">close</i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id='receitas' class="col s12">
+                    <ul class="tabs">
+                        <li class="tab col s4"><a class='active' href="#minhas_receitas">Minhas Receitas</a></li>
+                        <li class="tab col s4"><a href="#receitas_favoritas">Receitas Favoritas</a></li>
+                        <li class="tab col s4"><a href="#receitas_publicas">Receitas Públicas</a></li>
+                    </ul>
+
+                    <!-- LISTA DE MINHAS RECEITAS -->
+                    <div class="row" id="minhas_receitas"></div>
+
+                    <!-- LISTA DE RECEITAS FAVORITAS -->
+                    <div class="row" id="receitas_favoritas"></div>
+                    
+                    <!-- LISTA DE RECEITAS PÚBLICAS -->
+                    <div class="row" id="receitas_publicas"></div>
+                </div>
+            </div>
+        </div>
+    
+        <footer>
+            <!-- Import JQuery.js -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+            <!-- Smooth scrolling effect -->
+            <script>
+                $('a[href^="#"].link').on('click',function (e) {
+                    e.preventDefault();
+
+                    $('html, body').stop().animate({
+                        'scrollTop': $(this.hash).offset().top
+                    }, 900, 'swing');
+                });
+                $(document).ready(function(){
+                    $('.tabs').tabs();
+                });
+            </script>
+
+            <!-- Import materialize.js-->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+
+            <!-- Import firebase.js -->
+            <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase.js"></script>
+            <script>
+                // Initialize Firebase
+                var config = {
+                    apiKey: "AIzaSyBRDRxMfhh7rdGh1DFtpLNfjgX3VK0P2tg",
+                    authDomain: "receitas-costamilam.firebaseapp.com",
+                    databaseURL: "https://receitas-costamilam.firebaseio.com",
+                    projectId: "receitas-costamilam",
+                    storageBucket: "receitas-costamilam.appspot.com",
+                    messagingSenderId: "497375691460"
+                };
+                firebase.initializeApp(config);
+            </script>
+
+            <!-- Import JavaScript code with firebase actions -->
+            <script type="text/javascript" src="./js/js.js"></script>
+        </footer>
+    </body>
+</html>
