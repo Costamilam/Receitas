@@ -124,7 +124,7 @@
         </div>
     
         <footer>
-            <!-- Import JQuery.js -->
+            <!-- Import JQuery library -->
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
             <!-- Smooth scrolling effect -->
@@ -141,7 +141,7 @@
                 });
             </script>
 
-            <!-- Import materialize.js-->
+            <!-- Import materialize library -->
             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 
             <!-- Import firebase library -->
@@ -151,15 +151,14 @@
             <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase-storage.js"></script>
             <script>
                 // Initialize Firebase
-                var config = {
+                firebase.initializeApp({
                     apiKey: "AIzaSyDdG-O6DcqL9Ij_x8w6DEw95War7Ye8UwY",
                     authDomain: "receitas-alpha.firebaseapp.com",
                     databaseURL: "https://receitas-alpha.firebaseio.com",
                     projectId: "receitas-alpha",
                     storageBucket: "receitas-alpha.appspot.com",
                     messagingSenderId: "365867776803"
-                };
-                firebase.initializeApp(config);
+                });
             </script>
 
             <!-- Import JavaScript code with firebase actions -->
