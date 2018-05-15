@@ -3,7 +3,7 @@ let chave_usuario = '';
 let chave_receita = '';
 let acesso = firebase.database().ref('receita/acesso');
 let dado = firebase.database().ref('receita/dado');
-let arquivo = firebase.storage().ref();
+let arquivo = firebase.storage().ref('receita');
 let autenticacao = firebase.auth();
 let provedor = firebase.auth;
 autenticacao.languageCode = 'pt-br';
@@ -259,18 +259,16 @@ busca.addEventListener('keyup', function() {
 		nomes = document.getElementsByClassName('card-title');
 		divs = document.getElementsByClassName('div_receita');
 
-		for (let i = 0; i < nomes.length; i++) {
-			divs[i].style.display = 'block';
-		}
-
 		if(validar_busca(busca_valor)) {
 			for (let i = 0; i < nomes.length; i++) {
 				if(nomes[i].firstChild.nodeValue.search(busca_valor) == -1) {
 					divs[i].style.display = 'none';
+				} else {
+					divs[i].style.display = 'block';
 				}
 			}
 		}
-	}, 3000);
+	}, 1500);
 });
 
 //Função que busca uma receita do banco pelo nome, ingrediente ou modo de preparo
@@ -422,6 +420,7 @@ function selecionar(chave, tipo) {
 		nome.value = snapshot.val().nome;
 		nome.classList.add('valid');
 
+		ingrediente.value = '';
 		for(let i = 0; i < snapshot.val().ingrediente.length; i++) {
 			ingrediente.value += snapshot.val().ingrediente[i] + '\n';
 		}
@@ -543,7 +542,7 @@ function validar_tipo(publico, privado) {
 }
 
 function validar_busca(busca) {
-	expressao_regular = '[A-z]{2}[A-z\- ]{0,28}';
+	expressao_regular = '[A-z\- ]{0,30}';
 
 	return busca.match(expressao_regular);
 }
