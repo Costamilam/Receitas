@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
-        <title>Receitas v Beta 2.3</title>
+        <title>Receitas Costamilam - 3.7</title>
         <meta charset="utf-8">
 
         <!-- Import Google Icon Font -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
         <!-- Import materialize.css -->
         <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css"  media="screen,projection">
 
@@ -16,7 +15,7 @@
         <!-- Social Icons Fonts -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css">
 
-        <!-- Import My Cascading Style Sheet -->
+        <!-- Import My CSS -->
         <link rel="stylesheet" href="./css/css.css">
     </head>
     <body>
@@ -104,6 +103,7 @@
                     </div>
                 </div>
 
+                <!-- LISTA DE RECEITAS -->
                 <div id='receitas' class="col s12">
                     <ul class="tabs">
                         <li class="tab col s4"><a class='active' href="#minhas_receitas">Minhas Receitas</a></li>
@@ -124,7 +124,7 @@
         </div>
     
         <footer>
-            <!-- Import JQuery.js -->
+            <!-- Import JQuery library -->
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
             <!-- Smooth scrolling effect -->
@@ -141,22 +141,24 @@
                 });
             </script>
 
-            <!-- Import materialize.js-->
+            <!-- Import materialize library -->
             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 
-            <!-- Import firebase.js -->
-            <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase.js"></script>
+            <!-- Import firebase library -->
+            <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase-auth.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase-database.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase-storage.js"></script>
             <script>
                 // Initialize Firebase
-                var config = {
-                    apiKey: "AIzaSyDdG-O6DcqL9Ij_x8w6DEw95War7Ye8UwY",
-                    authDomain: "receitas-alpha.firebaseapp.com",
-                    databaseURL: "https://receitas-alpha.firebaseio.com",
-                    projectId: "receitas-alpha",
-                    storageBucket: "receitas-alpha.appspot.com",
-                    messagingSenderId: "365867776803"
-                };
-                firebase.initializeApp(config);
+                firebase.initializeApp({
+                    apiKey: "AIzaSyBRDRxMfhh7rdGh1DFtpLNfjgX3VK0P2tg",
+                    authDomain: "receitas-costamilam.firebaseapp.com",
+                    databaseURL: "https://receitas-costamilam.firebaseio.com",
+                    projectId: "receitas-costamilam",
+                    storageBucket: "receitas-costamilam.appspot.com",
+                    messagingSenderId: "497375691460"
+                });
             </script>
 
             <!-- Import JavaScript code with firebase actions -->
