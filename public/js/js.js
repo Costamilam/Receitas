@@ -306,7 +306,7 @@ function acessar_minha_receita() {
 				dado.child(chave).once('value').then(function(snapshot) {
 					objeto = snapshot.val();
 
-					url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+					url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/receita%2F${chave}%2F${objeto.imagem}?alt=media` : './file/default.png';
 
 					(function(chave, nome, url, tipo) {
 						minha_receita.innerHTML += `
@@ -342,7 +342,7 @@ function acessar_receita_favorita() {
 				dado.child(chave).once('value').then(function(snapshot) {
 					objeto = snapshot.val();
 			
-					url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+					url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/receita%2F${chave}%2F${objeto.imagem}?alt=media` : './file/default.png';
 			
 					(function(chave, nome, url, tipo) {
 						receita_favorita.innerHTML += `
@@ -381,7 +381,7 @@ function acessar_receita_publica() {
 					dado.child(chave).once('value').then(function(snapshot) {
 						  objeto = snapshot.val();
 				
-						  url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+						  url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/receita%2F${chave}%2F${objeto.imagem}?alt=media` : './file/default.png';
 				
 						(function(chave, nome, url, tipo) {
 							receita_publica.innerHTML += `
