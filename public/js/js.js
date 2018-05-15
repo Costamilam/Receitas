@@ -3,7 +3,7 @@ let chave_usuario = '';
 let chave_receita = '';
 let acesso = firebase.database().ref('receita/acesso');
 let dado = firebase.database().ref('receita/dado');
-let arquivo = firebase.storage().ref();
+let arquivo = firebase.storage().ref('receita');
 let autenticacao = firebase.auth();
 let provedor = firebase.auth;
 autenticacao.languageCode = 'pt-br';
@@ -12,7 +12,7 @@ autenticacao.languageCode = 'pt-br';
 let provider;
 
 //Variáveis utilizadas em leituras e escritas no banco
-let obj;
+let objeto;
 let url;
 let chave;
 
@@ -259,24 +259,21 @@ busca.addEventListener('keyup', function() {
 		nomes = document.getElementsByClassName('card-title');
 		divs = document.getElementsByClassName('div_receita');
 
-		for (let i = 0; i < nomes.length; i++) {
-			divs[i].style.display = 'block';
-		}
-
 		if(validar_busca(busca_valor)) {
 			for (let i = 0; i < nomes.length; i++) {
 				if(nomes[i].firstChild.nodeValue.search(busca_valor) == -1) {
 					divs[i].style.display = 'none';
+				} else {
+					divs[i].style.display = 'block';
 				}
 			}
 		}
-	}, 3000);
+	}, 1500);
 });
 
 //Função que busca uma receita do banco pelo nome, ingrediente ou modo de preparo
 /*document.getElementById('busca_avancada').addEventListener('click', function() {
 	var busca_valor = busca.value;
-
 	if(validar_busca(busca_valor)) {
 		limparCampos();
 		
@@ -284,15 +281,12 @@ busca.addEventListener('keyup', function() {
 			snapshot.forEach(function(childSnapshot) {
 		      	var chave = childSnapshot.key;
 		      	var obj = childSnapshot.val();
-
 				if(obj.nome.search(busca_valor) != -1 || obj.ingrediente.toString().search(busca_valor) != -1 || obj.preparo.search(busca_valor) != -1) {
 			      	var url;
-
 			      	if(obj.imagem == './image/default.png') {
 		      			url = './image/default.png';
 			      	} else
 		  				url = 'https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/' + chave + '%2F' + obj.imagem + '?alt=media&token=c634d1db-dc4c-4cb9-8630-fbedff537237';
-
 					mostrar(chave, obj.nome, url);
 		  		}
 		  	})
@@ -310,10 +304,10 @@ function acessar_minha_receita() {
 		snapshot.forEach(function(childSnapshot) {
 			(function(chave, tipo) {
 				dado.child(chave).once('value').then(function(snapshot) {
-					obj = snapshot.val();
-			
-					url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
-			
+					objeto = snapshot.val();
+
+					url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+
 					(function(chave, nome, url, tipo) {
 						minha_receita.innerHTML += `
 							<a class="div_receita" href="#container">
@@ -327,7 +321,7 @@ function acessar_minha_receita() {
 								</div>
 							</a>
 						`;
-					})(chave, obj.nome, url, tipo);
+					})(chave, objeto.nome, url, tipo);
 				})
 				.catch(function() {
 					M.toast({html: '<p>Algum erro ocorreu, uma receita pessoal não pode ser mostrada!</p>'});
@@ -346,9 +340,9 @@ function acessar_receita_favorita() {
 		snapshot.forEach(function(childSnapshot) {
 			(function(chave, tipo) {
 				dado.child(chave).once('value').then(function(snapshot) {
-					obj = snapshot.val();
+					objeto = snapshot.val();
 			
-					url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+					url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
 			
 					(function(chave, nome, url, tipo) {
 						receita_favorita.innerHTML += `
@@ -363,7 +357,7 @@ function acessar_receita_favorita() {
 								</div>
 							</a>
 						`;
-					})(chave, obj.nome, url, tipo);
+					})(chave, objeto.nome, url, tipo);
 				})
 				.catch(function() {
 					M.toast({html: '<p>Algum erro ocorreu, uma receita favorita não pode ser mostrada!</p>'});
@@ -385,9 +379,9 @@ function acessar_receita_publica() {
 	      	if(objeto.usuario != chave_usuario) { 
 				(function(chave, tipo) {
 					dado.child(chave).once('value').then(function(snapshot) {
-						  obj = snapshot.val();
+						  objeto = snapshot.val();
 				
-						  url = obj.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
+						  url = objeto.imagem ? `https://firebasestorage.googleapis.com/v0/b/receitas-alpha.appspot.com/o/${chave}%2F${obj.imagem}?alt=media&token=e5951253-c714-42e1-93ad-a25058ca0027` : './file/default.png';
 				
 						(function(chave, nome, url, tipo) {
 							receita_publica.innerHTML += `
@@ -402,7 +396,7 @@ function acessar_receita_publica() {
 									</div>
 								</a>
 							`;
-						})(chave, obj.nome, url, tipo);
+						})(chave, objeto.nome, url, tipo);
 					})
 					.catch(function() {
 						M.toast({html: '<p>Algum erro ocorreu, uma receita pública não pode ser mostrada!</p>'});
@@ -426,6 +420,7 @@ function selecionar(chave, tipo) {
 		nome.value = snapshot.val().nome;
 		nome.classList.add('valid');
 
+		ingrediente.value = '';
 		for(let i = 0; i < snapshot.val().ingrediente.length; i++) {
 			ingrediente.value += snapshot.val().ingrediente[i] + '\n';
 		}
@@ -533,11 +528,8 @@ function validar_preparo(preparo) {
 
 function validar_imagem(imagem) {
 	/*var expressao_regular = '(png|jpeg)'
-
 	var imagem = imagem.name.split('.')
-
 	formato = imagem[imagem.length - 1]
-
 	return formato.match(expressao_regular)*/
 
 	expressao_regular = '^[a-zA-Z0-9-_\.]+\.(jpg|gif|png)$';
@@ -550,7 +542,7 @@ function validar_tipo(publico, privado) {
 }
 
 function validar_busca(busca) {
-	expressao_regular = '[A-z]{2}[A-z\- ]{0,28}';
+	expressao_regular = '[A-z\- ]{0,30}';
 
 	return busca.match(expressao_regular);
 }
