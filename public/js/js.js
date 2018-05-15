@@ -445,13 +445,6 @@ function selecionar(chave, tipo) {
 	});
 }
 
-//Função que exclui a imagem anterior da receita
-function excluirImagem(chave) {
-	if(nomeImagemAntiga && nomeImagemAntiga !== nomeImagem) {
-		arquivo.child(`${chave}/${nomeImagemAntiga}`).delete().catch(() => console.log('erro'));
-	}
-}
-
 //Função que limpa o campo de pesquisa ao clicar no ícone "x"
 document.getElementById('close').addEventListener('click', function() {
     campoBuscar.value = '';
