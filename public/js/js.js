@@ -202,7 +202,9 @@ document.getElementById('editar').addEventListener('click', function() {
 			})
 			.then(function() {
 				if(valorImagem !== undefined) {
-					excluirImagem(chave_receita);
+					if(nomeImagemAntiga && nomeImagemAntiga !== nomeImagem) {
+						arquivo.child(`${chave}/${nomeImagemAntiga}`).delete().catch(() => console.log('erro'));
+					}
 
 					arquivo.child(`${chave_receita}/${valorImagem.name}`).put(valorImagem);
 				}
@@ -235,7 +237,9 @@ document.getElementById('excluir').addEventListener('click', function() {
 		dado.child(chave_receita).remove().then(function() {
 			acesso.child(chave_receita).remove();
 
-			arquivo.child(chave_receita).child(imagem_texto.value).delete();
+			if(nomeImagemAntiga) {
+				arquivo.child(`${chave_receita}/${nomeImagemAntiga}`).delete().catch(() => console.log('erro'));
+			}
 		})
 		.then(function() {
         	M.toast({html: '<p>Receita removida</p>'});
@@ -443,13 +447,9 @@ function selecionar(chave, tipo) {
 
 //Função que exclui a imagem anterior da receita
 function excluirImagem(chave) {
-		console.log(nomeImagem + nomeImagemAntiga)
-		if(nomeImagemAntiga && nomeImagemAntiga !== nomeImagem) {
-			arquivo.child(`${chave}/${nomeImagemAntiga}`).delete();
-		}
-	/*.catch(function() {
-		M.toast({html: '<p>Algum erro ocorreu, a receita pode não ter sua imagem atualizada!</p>'});
-	});*/
+	if(nomeImagemAntiga && nomeImagemAntiga !== nomeImagem) {
+		arquivo.child(`${chave}/${nomeImagemAntiga}`).delete().catch(() => console.log('erro'));
+	}
 }
 
 //Função que limpa o campo de pesquisa ao clicar no ícone "x"
@@ -472,6 +472,7 @@ function limparCampos() {
 	preparo.value = '';
 	imagem.value = '';
 	imagem_texto.value = '';
+	nomeImagemAntiga = null;
 	publico.checked = true;
 
 	nome.classList.remove('valid', 'invalid');
